@@ -8,10 +8,12 @@ import 'package:simple_live_core/simple_live_core.dart';
 
 class SuperChatCard extends StatefulWidget {
   final LiveSuperChatMessage message;
+  final VoidCallback onDelete;
   final Function()? onExpire;
   const SuperChatCard(
     this.message, {
     required this.onExpire,
+    required this.onDelete,
     Key? key,
   }) : super(key: key);
 
@@ -32,13 +34,13 @@ class _SuperChatCardState extends State<SuperChatCard> {
     countdown = endTime - currentTime;
 
     timer = Timer.periodic(const Duration(seconds: 1), timerCallback);
-
+    //_textColor.value = Colors.white;
     super.initState();
   }
 
   void timerCallback(e) {
     if (countdown <= 0) {
-      widget.onExpire?.call();
+      //widget.onExpire?.call();
       timer.cancel();
       return;
     }
@@ -52,67 +54,76 @@ class _SuperChatCardState extends State<SuperChatCard> {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: AppStyle.radius8,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Utils.convertHexColor(widget.message.backgroundColor),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: AppStyle.edgeInsetsA8,
-              child: Row(
-                children: [
-                  NetImage(
-                    widget.message.face,
-                    width: 48,
-                    height: 48,
-                    borderRadius: 36,
-                  ),
-                  AppStyle.hGap12,
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          widget.message.userName,
-                          style: const TextStyle(
-                            color: AppColors.black333,
-                          ),
-                        ),
-                        Text(
-                          "￥${widget.message.price}",
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
+      child: GestureDetector(
+        onTap: widget.onDelete, // 当整个Widget被点击时调用 onDelete 方法
+        child: Container(
+          decoration: BoxDecoration(
+            color: Utils.convertHexColor(widget.message.backgroundColor),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: AppStyle.edgeInsetsA8,
+                child: Row(
+                  children: [
+                    NetImage(
+                      widget.message.face,
+                      width: 48,
+                      height: 48,
+                      borderRadius: 36,
                     ),
-                  ),
-                  Text(
-                    "$countdown",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
+                    AppStyle.hGap12,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            widget.message.userName,
+                            style: const TextStyle(
+                              color: AppColors.black333,
+                            ),
+                          ),
+                          Text(
+                            "￥${widget.message.price}",
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    Text(
+                      "$countdown",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    IconButton(
+                      // 添加删除按钮
+                      icon: const Icon(Icons.delete, size: 18),
+                      onPressed: widget.onDelete, // 点击按钮时调用 onDelete 方法
+                      color: Colors.red,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color:
-                    Utils.convertHexColor(widget.message.backgroundBottomColor),
+              Container(
+                decoration: BoxDecoration(
+                  color: Utils.convertHexColor(
+                      widget.message.backgroundBottomColor),
+                ),
+                padding: AppStyle.edgeInsetsA8,
+                child: Text(
+                  widget.message.message,
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
-              padding: AppStyle.edgeInsetsA8,
-              child: Text(
-                widget.message.message,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
