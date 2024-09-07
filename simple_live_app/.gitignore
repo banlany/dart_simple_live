@@ -43,6 +43,10 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+/windows/app/debug
+/windows/app/profile
+/windows/app/release
+
 /ios/Podfile.lock
 pubspec.lock
 
